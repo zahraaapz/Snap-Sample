@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snap_example/constant/dimens.dart';
 import 'package:snap_example/constant/text_style.dart';
-
 import '../widget/widget.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,8 +16,8 @@ class CurrentwidgetStates {
   CurrentwidgetStates._();
 
   static const stateSelectOrgin = 0;
-  static const stateSelectDestination = 0;
-  static const stateSelectDriver = 0;
+  static const stateSelectDestination = 1;
+  static const stateSelectDriver = 2;
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -35,19 +34,15 @@ class _MyHomePageState extends State<MyHomePage> {
           currentWidget(),
           MyBackButton(
             onPressed: () {
-if (currentWidgetList.length>1) {
+   if (currentWidgetList.length>1) {
   setState(() {
     currentWidgetList.removeLast();
   });
 }
 
-
-
-
-
             },
           ),
-          origin(),
+         
         ],
       )),
     );
@@ -61,20 +56,21 @@ if (currentWidgetList.length>1) {
         widget = origin();
         break;
 
-      case CurrentwidgetStates.stateSelectOrgin:
+      case CurrentwidgetStates.stateSelectDestination:
         widget = distination();
         break;
 
       case CurrentwidgetStates.stateSelectDriver:
         widget = driver();
         break;
+        
     }
     return widget;
   }
 
   Positioned origin() {
     return Positioned(
-        top: 0,
+        bottom: 0,
         left: 0,
         right: 0,
         child: Padding(
@@ -95,7 +91,7 @@ if (currentWidgetList.length>1) {
 
   Positioned distination() {
     return Positioned(
-        top: 0,
+       bottom: 0,
         left: 0,
         right: 0,
         child: Padding(
@@ -116,7 +112,7 @@ if (currentWidgetList.length>1) {
 
   Positioned driver() {
     return Positioned(
-        top: 0,
+        bottom: 0,
         left: 0,
         right: 0,
         child: Padding(

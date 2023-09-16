@@ -15,11 +15,13 @@ Function() onPressed;
         left: Dimens.medium,
         
         child: Container(
-          decoration: const BoxDecoration(shape: BoxShape.circle, boxShadow: [
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle, boxShadow: [
             BoxShadow(
               color: Colors.black,
               offset: Offset(2, 3),
-              blurRadius: 18,
+              blurRadius:10,
             )
           ]),
         child: IconButton(onPressed: onPressed, icon: Icon(Icons.arrow_back)),));
