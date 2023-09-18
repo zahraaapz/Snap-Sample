@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -66,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     isPicker: true,
                     markerOption: MarkerOption(
                         advancedPickerMarker: MarkerIcon(
-                      iconWidget: markerOrgin,
+                      iconWidget: markerIcon,
                     )),
                     zoomOption: ZoomOption(
                         stepZoom: 1,
@@ -83,13 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     break; 
                      case CurrentwidgetStates.stateSelectDestination:
                      geoPoint.removeLast();
-                     markerIcon=markerOrgin;
+                    markerIcon=markerOrgin;
                     break; 
                      case CurrentwidgetStates.stateSelectDriver:
                      mapController.advancedPositionPicker();
                      mapController.removeMarker(geoPoint.last);
                       geoPoint.removeLast();
-                        markerIcon=markerdes;
+                      markerIcon=markerdes;
                     break;
                  
                 }
@@ -118,6 +120,7 @@ setState(() {
 
       case CurrentwidgetStates.stateSelectDestination:
         widget = distination();
+       
         break;
 
       case CurrentwidgetStates.stateSelectDriver:
@@ -189,15 +192,15 @@ setState(() {
                 await distance2point(geoPoint.first, geoPoint.last)
                     .then((value) {
                   setState(() {
-                    if (value <= 1000) {
-                      distance = ' متر فاصله مبدا تا مقصد  ${value.toInt()}';
-                    } else {
-                      distance =
-                          ' کیلومتر فاصله مبدا تا مقصد  ${value ~/ 1000}';
-                    }
+                            if (value <= 1000) {
+                        distance = "فاصله مبدا تا مقصد ${value.toInt()} متر";
+                      } else if (value > 1000) {
+                        distance = "فاصله مبدا تا مقصد ${value ~/ 1000} کیلومتر";}
                   });
                 });
-                getAddress();
+              await getAddress();
+           
+           
               },
               child: Text(
                 'انتخاب مقصد',
@@ -222,7 +225,7 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(orgAddress),
+                child: Text(orgAddress,textAlign: TextAlign.center,),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -233,7 +236,7 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(desAddress),
+                child: Text(desAddress,textAlign: TextAlign.center),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -244,7 +247,7 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(distance),
+                child: Text(distance,textAlign: TextAlign.center),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -269,23 +272,25 @@ setState(() {
               geoPoint.last.latitude, geoPoint.last.longitude,
               localeIdentifier: 'fa')
           .then((List<Placemark> plist) {
+            log(plist.toString());
         setState(() {
           desAddress =
               '${plist.first.locality}  ${plist.first.thoroughfare} ${plist[2].name}';
         });
       });  
-       await placemarkFromCoordinates(
-              geoPoint.first.latitude, geoPoint.first.longitude,
-              localeIdentifier: 'fa')
-          .then((List<Placemark> plist) {
-        setState(() {
-          orgAddress =
-              '${plist.first.locality}  ${plist.first.thoroughfare} ${plist[2].name}';
-        });
-      });
+      //  await placemarkFromCoordinates(
+      //         geoPoint.first.latitude, geoPoint.first.longitude,
+      //         localeIdentifier: 'fa')
+      //     .then((List<Placemark> plist) {
+      //   setState(() {
+      //     orgAddress =
+      //         '${plist.first.locality}  ${plist.first.thoroughfare} ${plist[2].name}';
+      //   });
+      // });
     } catch (e) {
       orgAddress='ادرس یافت نشد';
       desAddress='ادرس یافت نشد';
+        log(e.toString());
     }
   }
 }
