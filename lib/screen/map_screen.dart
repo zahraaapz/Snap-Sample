@@ -37,8 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
     Assets.icons.origin,
     height: 100,
     width: 48,
-  ); 
-   Widget markerOrgin = SvgPicture.asset(
+  );
+  Widget markerOrgin = SvgPicture.asset(
     Assets.icons.origin,
     height: 100,
     width: 48,
@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   MapController mapController = MapController(
       initPosition:
           GeoPoint(latitude: 35.7367516373, longitude: 51.2911096718));
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -60,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           SizedBox.expand(
             child: OSMFlutter(
-           
                 mapIsLoading:
                     SpinKitCircle(color: Color.fromARGB(255, 2, 207, 36)),
                 controller: mapController,
@@ -79,30 +79,52 @@ class _MyHomePageState extends State<MyHomePage> {
           currentWidget(),
           MyBackButton(
             onPressed: () {
-             
-                switch (currentWidgetList.last) {
-                  case CurrentwidgetStates.stateSelectOrgin:
-                    break; 
-                     case CurrentwidgetStates.stateSelectDestination:
-                     geoPoint.removeLast();
-                    markerIcon=markerOrgin;
-                    break; 
-                     case CurrentwidgetStates.stateSelectDriver:
-                     mapController.advancedPositionPicker();
-                     mapController.removeMarker(geoPoint.last);
-                      geoPoint.removeLast();
-                      markerIcon=markerdes;
-                    break;
-                 
+              setState(() {
+                currentWidgetList.last != currentWidgetList.first
+                    ? currentWidgetList.removeLast()
+                    : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                          'شما نمی توانید خارج شوید',
+                          style: MyTextStyle.bottun,
+                        ),
+                        backgroundColor: Color.fromARGB(255, 13, 220, 141),
+                      ));
+
+                if (geoPoint.isEmpty) {
+                  mapController.advancedPositionPicker();
+                  markerIcon = markerOrgin;
                 }
+                if (geoPoint.isNotEmpty) {
+                  mapController.removeMarker(geoPoint.last);
+                  geoPoint.removeLast();
+                  if (currentWidgetList.last ==
+                      CurrentwidgetStates.stateSelectDestination) {
+                    markerIcon = markerdes;
+                  } else {
+                    markerIcon = markerOrgin;
+                  }
+                  mapController.init();
+                }
+              });
+              // switch (currentWidgetList.last) {
+              //   case CurrentwidgetStates.stateSelectOrgin:
+              //     break;
+              //      case CurrentwidgetStates.stateSelectDestination:
+              //      geoPoint.removeLast();
+              //     markerIcon=markerOrgin;
+              //     break;
+              //      case CurrentwidgetStates.stateSelectDriver:
+              //      mapController.advancedPositionPicker();
+              //      mapController.removeMarker(geoPoint.last);
+              //       geoPoint.removeLast();
+              //       markerIcon=markerdes;
+              //     break;
 
-setState(() {
-  currentWidgetList.removeLast();
-});
+              // }
 
-
-
-
+// setState(() {
+//   currentWidgetList.removeLast();
+// });
             },
           ),
         ],
@@ -120,7 +142,7 @@ setState(() {
 
       case CurrentwidgetStates.stateSelectDestination:
         widget = distination();
-       
+
         break;
 
       case CurrentwidgetStates.stateSelectDriver:
@@ -192,15 +214,14 @@ setState(() {
                 await distance2point(geoPoint.first, geoPoint.last)
                     .then((value) {
                   setState(() {
-                            if (value <= 1000) {
-                        distance = "فاصله مبدا تا مقصد ${value.toInt()} متر";
-                      } else if (value > 1000) {
-                        distance = "فاصله مبدا تا مقصد ${value ~/ 1000} کیلومتر";}
+                    if (value <= 1000) {
+                      distance = "فاصله مبدا تا مقصد ${value.toInt()} متر";
+                    } else if (value > 1000) {
+                      distance = "فاصله مبدا تا مقصد ${value ~/ 1000} کیلومتر";
+                    }
                   });
                 });
-              await getAddress();
-           
-           
+                await getAddress();
               },
               child: Text(
                 'انتخاب مقصد',
@@ -225,7 +246,14 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(orgAddress,textAlign: TextAlign.center,),
+                child: Center(
+                  child: Text(
+                    orgAddress,
+                        style: MyTextStyle.bottun,
+                    
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -236,7 +264,8 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(desAddress,textAlign: TextAlign.center),
+                child: Center(
+                    child: Text(desAddress,   style: MyTextStyle.bottun, textAlign: TextAlign.center)),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -247,7 +276,8 @@ setState(() {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimens.medium),
                     color: Colors.white),
-                child: Text(distance,textAlign: TextAlign.center),
+                child:
+                    Center(child: Text(distance,   style: MyTextStyle.bottun, textAlign: TextAlign.center)),
               ),
               SizedBox(
                 height: Dimens.small,
@@ -272,12 +302,12 @@ setState(() {
               geoPoint.last.latitude, geoPoint.last.longitude,
               localeIdentifier: 'fa')
           .then((List<Placemark> plist) {
-            log(plist.toString());
+        log(plist.toString());
         setState(() {
           desAddress =
               '${plist.first.locality}  ${plist.first.thoroughfare} ${plist[2].name}';
         });
-      });  
+      });
       //  await placemarkFromCoordinates(
       //         geoPoint.first.latitude, geoPoint.first.longitude,
       //         localeIdentifier: 'fa')
@@ -288,9 +318,9 @@ setState(() {
       //   });
       // });
     } catch (e) {
-      orgAddress='ادرس یافت نشد';
-      desAddress='ادرس یافت نشد';
-        log(e.toString());
+      orgAddress = 'ادرس یافت نشد';
+      desAddress = 'ادرس یافت نشد';
+      log(e.toString());
     }
   }
 }
